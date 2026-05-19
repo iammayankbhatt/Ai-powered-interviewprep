@@ -24,7 +24,7 @@ async function registerUserController(req,res){
         return res.status(400).json({message:"Account already exists. "})
     }
     const hash= await bcrypt.hash(password,10)
-    const user= await userModel.create({username,email,password})
+    const user= await userModel.create({username,email,password:hash})
     const token = jwt.sign({id:user._id,username:user.username},process.env.JWT_SECRET,{expiresIn:"20d"})
 
     res.cookie("token",token)
