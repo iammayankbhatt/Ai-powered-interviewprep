@@ -20,7 +20,7 @@ async function registerUserController(req,res){
     const isUserAlreadyExists = await UserModel.findOne({
         $or:[{username},{email}]
     })
-    if(isUserAlreadyExists){o9
+    if(isUserAlreadyExists){
         return res.status(400).json({message:"Account already exists. "})
     }
     const hash= await bcrypt.hash(password,10)
@@ -117,11 +117,35 @@ async function getMeController(req, res) {
 
 }
 
+/**
+ * @name deleteAccountController
+ * @description to delete the account.
+ * @access private
+ */
+async function deleteAccountController(req,res){
+    try{
+        const userId = req.user.id
+        await userModel.findByIdAndDelete(userId)
+        res.clearCookie("token")
+        return res.status(200).json({
+            message: "Account deleted successfully!"
+        })
+
+    }catch(err){
+
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: err.message
+        })
+    }
+}
+
 
 
 module.exports = {
     registerUserController,
     loginUserController,
     logoutUserController,
-    getMeController
+    getMeController,
+    deleteAccountController
 }
